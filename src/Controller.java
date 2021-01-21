@@ -31,10 +31,13 @@ import javafx.stage.Stage;
  * @author kappe
  */
 public class Controller implements Initializable {
+
     // Variables used later 
     Random rnd = new Random();
     public int[] vals = new int[15];
     public Dice[] dices = new Dice[15];
+    boolean wins = false;
+    int correct = 0;
     int tries = 0;
     int bäre;
     int höhle;
@@ -135,7 +138,6 @@ public class Controller implements Initializable {
         }
     }
 
-    
     @FXML
     // On click for new dice
     public void roll(ActionEvent event) {
@@ -164,20 +166,18 @@ public class Controller implements Initializable {
     private void würfle() {
         initializeArr();
         imagehelper = new ImageHelper(vals, imvArray, dices);
-        if (tries == 5) {
-            winScene();
-        } else {
-            resetText();
 
-            for (int i = 0; i < 9; i++) {
-                try {
-                    int rand = rnd.nextInt(6);
-                    rand++;
-                    vals[i] = rand;
-                    dices[i] = new Dice(rand, imvArray[i]);
-                } catch (Exception e) {
-                }
+        resetText();
+
+        for (int i = 0; i < 9; i++) {
+            try {
+                int rand = rnd.nextInt(6);
+                rand++;
+                vals[i] = rand;
+                dices[i] = new Dice(rand, imvArray[i]);
+            } catch (Exception e) {
             }
+
             calcVals();
         }
         // print out the solutions because im lazy and cant be bothered to solve it everytime
@@ -190,6 +190,7 @@ public class Controller implements Initializable {
     private void würfleMulti() {
         if (points_spieler1 > 5 || points_spieler2 > 5) {
             winScene();
+
         } else {
             würfle();
             if (spieler == 1) {
@@ -207,7 +208,7 @@ public class Controller implements Initializable {
         if (multi) {
             checkMulti();
         } else {
-            check();
+            checkSingle();
         }
     }
 
@@ -217,6 +218,8 @@ public class Controller implements Initializable {
         try {
             guessHöhlen = anzHöhlen.getText();
             guessBären = anzBären.getText();
+            guessHöhlen.replaceAll("\\s+", "");
+            guessBären.replaceAll("\\s+", "");
 
             if (Integer.valueOf(guessHöhlen) == höhle && Integer.valueOf(guessBären) != bäre) {
                 valHöhlen.setText("Richtig");
@@ -245,28 +248,41 @@ public class Controller implements Initializable {
     }
 
     // Checks it the input is correct, in Singleplayer
-    private void check() {
+    private void checkSingle() {
         fehler.setText("");
-        try {
-            guessHöhlen = anzHöhlen.getText();
-            guessBären = anzBären.getText();
-
-            if (Integer.valueOf(guessHöhlen) == höhle && Integer.valueOf(guessBären) != bäre) {
-                valHöhlen.setText("Richtig");
-                valBären.setText("Falsch");
-            } else if (Integer.valueOf(guessHöhlen) != höhle && Integer.valueOf(guessBären) == bäre) {
-                valHöhlen.setText("Falsch");
-                valBären.setText("Richtig");
-            } else if (Integer.valueOf(guessHöhlen) == höhle && Integer.valueOf(guessBären) == bäre) {
-                valBären.setText("Richtig");
-                valHöhlen.setText("Richtig");
-                würfleMulti();
-            } else {
-                valBären.setText("Falsch");
-                valHöhlen.setText("Falsch");
+        if (correct > 5) {
+            winScene();
+        } else if (tries > 5) {
+            try {
+                ripScene();
+            } catch (IOException ex) {
             }
-        } catch (Exception e) {
-            fehler.setText("Bisch du dummmm");
+        } else {
+            try {
+                guessHöhlen = anzHöhlen.getText();
+                guessBären = anzBären.getText();
+                guessHöhlen.replaceAll("\\s+", "");
+                guessBären.replaceAll("\\s+", "");
+
+                if (Integer.valueOf(guessHöhlen) == höhle && Integer.valueOf(guessBären) != bäre) {
+                    valHöhlen.setText("Richtig");
+                    valBären.setText("Falsch");
+                } else if (Integer.valueOf(guessHöhlen) != höhle && Integer.valueOf(guessBären) == bäre) {
+                    valHöhlen.setText("Falsch");
+                    valBären.setText("Richtig");
+                } else if (Integer.valueOf(guessHöhlen) == höhle && Integer.valueOf(guessBären) == bäre) {
+                    valBären.setText("Richtig");
+                    valHöhlen.setText("Richtig");
+                    correct++;
+                    würfleMulti();
+                } else {
+                    valBären.setText("Falsch");
+                    valHöhlen.setText("Falsch");
+                }
+            } catch (Exception e) {
+                fehler.setText("Bisch du dummmm");
+            }
+            tries++;
         }
     }
 
@@ -316,5 +332,18 @@ public class Controller implements Initializable {
 
     public int getPoints_spieler2() {
         return points_spieler2;
+    }
+
+    private void ripScene() throws IOException {
+        Parent root;
+        root = FXMLLoader.load(getClass().getResource("RIP.fxml"));
+        Stage stage = new Stage();
+        Stage old = (Stage) fehler.getScene().getWindow();
+        Scene scene = new Scene(root);
+
+        stage.setScene(scene);
+
+        stage.show();
+        old.close();
     }
 }

@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
@@ -15,10 +17,15 @@
          </font>
       </Label>
       <Label layoutX="14.0" layoutY="74.0" text="Do you want to play Multiplayer?" />
-      <Slider fx:id="dices" blockIncrement="3.0" layoutX="22.0" layoutY="208.0" majorTickUnit="3.0" max="9.0" min="3.0" showTickLabels="true" snapToTicks="true" value="3.0" />
+      <Slider fx:id="dices" blockIncrement="3.0" layoutX="22.0" layoutY="208.0" majorTickUnit="3.0" max="9.0" min="3.0" minorTickCount="0" showTickLabels="true" snapToTicks="true" value="3.0" />
       <Label layoutX="21.0" layoutY="179.0" text="How many dice should there be?" />
-      <Button fx:id="btnConfirm" layoutX="272.0" layoutY="292.0" mnemonicParsing="false" onAction="#confirm" text="Confirm" />
       <Label fx:id="fehler" layoutX="15.0" layoutY="297.0" prefHeight="21.0" prefWidth="177.0" />
       <RadioButton fx:id="select" layoutX="21.0" layoutY="105.0" mnemonicParsing="false" onAction="#mutlti" text="Yes" />
+      <ImageView fitHeight="105.0" fitWidth="116.0" layoutX="262.0" layoutY="247.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@imgs/bär2.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="btnConfirm" layoutX="22.0" layoutY="292.0" mnemonicParsing="false" onAction="#confirm" text="Confirm" />
    </children>
 </AnchorPane>
